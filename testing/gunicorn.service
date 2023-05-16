@@ -1,0 +1,17 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=vod_admin
+Group=vod_admin
+WorkingDirectory=/home/vod_admin/vod.angeltv.org/backend
+ExecStart=/home/vod_admin/vod.angeltv.org/.venv/bin/gunicorn --workers 2 \
+--timeout 600 core.wsgi:application -b 192.168.2.207:8000
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
