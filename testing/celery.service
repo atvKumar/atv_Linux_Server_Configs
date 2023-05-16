@@ -1,0 +1,22 @@
+[Unit]
+Description=Celery Service
+After=network.target
+
+[Service]
+Type=forking
+User=vod_admin
+Group=vod_admin
+
+EnvironmentFile=/etc/default/celeryd
+WorkingDirectory=/home/vod_admin/vod.angeltv.org/backend
+ExecStart=/home/vod_admin/vod.angeltv.org/.venv/bin/celery multi start ${CELERYD_NODES} \
+  -A ${CELERY_APP} --pidfile=${CELERYD_PID_FILE} \
+  --logfile=${CELERYD_LOG_FILE} --loglevel=${CELERYD_LOG_LEVEL} ${CELERYD_OPTS}
+ExecStop=/home/vod_admin/vod.angeltv.org/.venv/bin/celery ${CELERY_BIN} multi stopwait ${CELERYD_NODES} \
+  --pidfile=${CELERYD_PID_FILE}
+ExecReload=/home/vod_admin/vod.angeltv.org/.venv/bin/celery ${CELERY_BIN} multi restart ${CELERYD_NODES} \
+  -A ${CELERY_APP} --pidfile=${CELERYD_PID_FILE} \
+  --logfile=${CELERYD_LOG_FILE} --loglevel=${CELERYD_LOG_LEVEL} ${CELERYD_OPTS}
+
+[Install]
+WantedBy=multi-user.target
